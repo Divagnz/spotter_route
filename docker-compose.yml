@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:13-3.1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=spotter_route
+      - POSTGRES_USER=spotter_route_user
+      - POSTGRES_PASSWORD=spotter_route_password
+    ports:
+      - "5434:5432"
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py import_fuel_stations &&
+             gunicorn spotter_route.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgis://spotter_route:spotter_route@localhost:5432/spotter_route
+      - DEBUG=0
+      - SECRET_KEY=your-secret-key-here
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

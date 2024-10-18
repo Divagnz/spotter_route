@@ -1,0 +1,17 @@
+//give me gitignore file for django and pycharm
+
+
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+
+# Python
