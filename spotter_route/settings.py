@@ -2,18 +2,19 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
 SECRET_KEY = 'your-secret-key-here'
 
 OPENROUTESERVICE_API_KEY = os.getenv('OPENROUTESERVICE_API_KEY', "yor-api-key-here")
 DB_NAME = os.getenv('POSTGRES_DB', 'spotter_route')
-DB_USER = os.getenv('POSTGRES_USER', 'spotter_route_user')
-DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'spotter_route_password')
+DB_USER = os.getenv('POSTGRES_USER', 'spotter_route')
+DB_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'spotter_route')
 DB_HOST = os.getenv('POSTGRES_HOST', 'spotter-db')
 DB_PORT = os.getenv('POSTGRES_PORT', 5432)
 DEBUG = os.getenv('DEBUG', False)
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*')
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
