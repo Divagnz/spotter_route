@@ -1,0 +1,11 @@
+django ==3.2.23
+djangorestframework
+psycopg2-binary
+requests
+folium
+geopy
+gunicorn
+aiohttp
+openrouteservice
+dataclasses-json
+geodistpy
