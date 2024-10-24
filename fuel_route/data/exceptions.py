@@ -6,3 +6,6 @@ class FuelStationNotFoundException(Exception):
 
 class InvalidCoordinatesException(Exception):
     pass
+
+class GeocodeNotFoundException(Exception):
+    pass

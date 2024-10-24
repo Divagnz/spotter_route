@@ -5,14 +5,14 @@ from fuel_route.data.data_types import FuelStation
 
 class FuelStationModel(models.Model):
     id = models.AutoField(primary_key=True)
-    opis_id: int = models.IntegerField(unique=True)
-    truckstop_name: str = models.CharField(max_length=255)
-    address: str = models.CharField(max_length=255)
-    city: str = models.CharField(max_length=100)
-    state: str = models.CharField(max_length=2)
-    rack_id: int = models.IntegerField(max_length=255)
+    opis_id = models.IntegerField(unique=True)
+    truckstop_name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=2)
+    rack_id = models.IntegerField()
     location = models.PointField(srid=4326)
-    retail_price: float = models.FloatField()
+    retail_price = models.FloatField()
 
     class Meta:
         indexes = [
@@ -20,7 +20,7 @@ class FuelStationModel(models.Model):
             models.Index(fields=['opis_id'])
         ]
 
-    def to_domain(self) -> FuelStation:
+    def to_base(self) -> FuelStation:
         return FuelStation(
             id=self.id,
             opis_id=self.opis_id,
@@ -32,5 +32,3 @@ class FuelStationModel(models.Model):
             location=self.location,
             retail_price=self.retail_price
         )
-    class Meta:
-        indexes = [models.Index(fields=['location'])]

@@ -12,6 +12,9 @@ folium = "*"
 geopy = "*"
 gunicorn = "*"
 aiohttp = "*"
+openrouteservice = "*"
+dataclasses-json = "*"
+geodistpy = "*"
 
 [dev-packages]
 

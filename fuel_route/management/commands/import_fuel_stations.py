@@ -12,10 +12,12 @@ from fuel_route.data.data_types import FuelStation
 from typing import List
 
 from fuel_route.services.geocoding_service import GeocodingService
+from fuel_route.services.ors_service_client import ORSClient
 
 
 class Command(BaseCommand):
     help = 'Import fuel stations from a CSV file'
+    ors_client: ORSClient = ORSClient()
 
     def add_arguments(self, parser):
         parser.add_argument('csv_file', type=str, help='Path to the CSV file')
@@ -33,21 +35,30 @@ class Command(BaseCommand):
         geolocator = Nominatim(user_agent="spotter-test")
 
         geocoding_service = GeocodingService()
-        with open(file_path, 'r') as csvfile:
+        with (open(file_path, 'r') as csvfile):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 if FuelStationModel.objects.filter(opis_id=row['OPIS Truckstop ID']).exists():
                     print(f"Fuel station with OPIS ID {row['OPIS Truckstop ID']} already exists")
                     continue
-                formatted_address = geocoding_service.format_address(
-                    row['Address'], row['City'], row['State']
-                )
-                print(f"Geocoding: {formatted_address}")
-                coords = geocoding_service.geocode(formatted_address)
+
+                time.sleep(0.3)
+                # formatted_address = geocoding_service.format_address(
+                #     row['Address'], row['City'], row['State']
+                # )
+                # print(f"Geocoding: {formatted_address}")
+                # coords = geocoding_service.geocode(formatted_address)
+                address = f"{row['Address']}, {row['City']}, {row['State']}"
+                try:
+                    coords = self.ors_client.geocode(address)
+                except Exception as e:
+                    print(f"Couldn't geocode: {address}")
+                    continue
 
                 if coords:
-                    print(f"Geocoded: {formatted_address}, {coords}")
-                    lat, lon = coords
+                    print(f"Geocoded: {address}, {coords}")
+                    lat = coords.lat
+                    lon = coords.lon
                     fuel_station = FuelStation(
                         opis_id=int(row['OPIS Truckstop ID']),
                         truckstop_name=row['Truckstop Name'],
@@ -62,7 +73,7 @@ class Command(BaseCommand):
                     self.import_fuel_stations(fuel_station)
                     fuel_stations.append(fuel_station)
                 else:
-                    print(f"Couldn't geocode: {formatted_address}")
+                    print(f"Couldn't geocode: {address}")
 
         return fuel_stations
 
@@ -80,6 +91,7 @@ class Command(BaseCommand):
                 'retail_price': fuel_station.retail_price
             }
         )
+        print(f"Imported fuel station: {fuel_station.truckstop_name}")
 
 
     def geocode(self, geolocator, address, max_attempts=3):

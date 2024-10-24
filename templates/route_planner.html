@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimal Fuel Route Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body class="bg-gray-100 h-screen w-screen">
+    <div class="container mx-auto px-4 py-8 w-full h-full max-h-full overflow-hidden flex flex-col justify-center items-center w-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Optimal Fuel Route Planner</h1>
+        <div class="bg-white shadow-md rounded 2xl:min-w-[1440px] lg:min-w-[1024px] max-h-full h-full px-8 pt-6 pb-8 mb-4 flex flex-row justify-center items-start gap-5">
+            <div class="w-[250px] min-w-[250px] h-full flex flex-col gap-2">
+
+                <form id="routeForm" class="mb-4">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="start">
+                            Start Location
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="start" type="text" placeholder="Enter start location">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="end">
+                            End Location
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="end" type="text" placeholder="Enter end location">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                            Find Optimal Route
+                        </button>
+                    </div>
+                </form>
+                <div id="result" class="w-full flex-grow flex flex-col justify-center items-start h-full overflow-hidden">
+                    <h2 class="text-2xl font-bold mb-4">Route Details</h2>
+                    <div id="routeDetails" class="bg-white border-2 px-8 pt-6 pb-8 w-full h-full flex-grow flex-col flex"></div>
+                </div>
+            </div>
+            <div id="map" class="w-full h-full min-h-full border-2 flex flex-col justify-center items-center"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('routeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+
+            try {
+                const response = await axios.post('/api/optimal-route/', { start, end });
+                const { route, map_html } = response.data;
+
+                // Display route details
+                const routeDetails = document.getElementById('routeDetails');
+                routeDetails.innerHTML = `
+                    <p><strong>Distance:</strong> ${route.distance.toFixed(2)} miles</p>
+                    <p><strong>Total Cost:</strong> $${route.total_cost.toFixed(2)}</p>
+                    <h3 class="text-sm font-bold mt-4 mb-2">Fuel Stops:</h3>
+                    <ul>
+                        ${route.fuel_stops.map(stop => `
+                            <li class="mb-2 text-xs">
+                                <strong>${stop.truckstop_name}</strong><br>
+                                ${stop.address}, ${stop.city}, ${stop.state}<br>
+                                Price: $${stop.retail_price.toFixed(2)}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+
+                // Display map
+                const mapDiv = document.getElementById('map');
+                mapDiv.innerHTML = map_html;
+
+                // Show result section
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the route. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

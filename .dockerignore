@@ -1,0 +1,22 @@
+.dockerignore
+docker-compose.yml
+.env
+.env.example
+.git
+.gitignore
+.vscode
+.idea
+.venv
+.DS_Store
+.python-version
+.jetclient
+copy_ts_files.sh
+*.csv
+*.log
+*.pyc
+*.pyo
+*.pyd
+//Ignore the files and directories that are not required in the docker image.
+*.pdf
+*.doc
+*.md

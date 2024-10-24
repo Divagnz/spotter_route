@@ -2,12 +2,18 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(BASE_DIR)
 SECRET_KEY = 'your-secret-key-here'
 
-DEBUG = False
-
-ALLOWED_HOSTS = ['*']
+OPENROUTESERVICE_API_KEY = os.getenv('OPENROUTESERVICE_API_KEY', "yor-api-key-here")
+DB_NAME = os.getenv('DB_NAME', 'spotter_route')
+DB_USER = os.getenv('DB_USER', 'spotter_route_user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'spotter_route_password')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5434')
+DEBUG = os.getenv('DEBUG', False)
+SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-here')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,7 +42,7 @@ ROOT_URLCONF = 'spotter_route.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,11 +60,11 @@ WSGI_APPLICATION = 'spotter_route.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'spotter_route',
-        'USER': 'spotter_route_user',
-        'PASSWORD': 'spotter_route_password',
-        'HOST': 'localhost',
-        'PORT': '5434',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
 
@@ -100,3 +106,4 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
 }
+

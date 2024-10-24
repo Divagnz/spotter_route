@@ -15,3 +15,7 @@ media
 *.iws
 
 # Python
+.env
+.env.local
+venv/
+pip-log.txt

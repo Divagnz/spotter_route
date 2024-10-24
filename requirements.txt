@@ -1,7 +1,0 @@
-Django==3.2.23
-djangorestframework
-psycopg2-binary
-requests
-folium
-geopy
-gunicorn
